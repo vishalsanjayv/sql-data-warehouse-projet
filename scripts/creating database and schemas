@@ -1,0 +1,38 @@
+/* 
+Creating Databases and Schemas after verifying that they don't already exist
+If they do exist, they will be dropped to create a new one with the hierarchy that is decided on
+*/
+-- As I am used to Adventureworks Datasets, the naming conventions for this datawarehouse will be close to it--
+
+/*
+CAUTION:
+
+Running this a second time will result in loss of all data (if exists)
+*/
+
+USE Master;
+GO
+
+--Conditional--
+
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DataWarehouse')
+BEGIN
+	ALTER DATABASE Datawarehouse SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+	DROP DATABASE DataWarehouse;
+END;
+GO
+
+CREATE DATABASE DataWarehouse;
+GO
+
+USE DataWarehouse;
+GO
+
+CREATE SCHEMA bronze;
+GO
+
+CREATE SCHEMA silver;
+GO 
+
+CREATE SCHEMA gold;
+GO
