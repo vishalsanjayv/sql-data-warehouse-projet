@@ -1,0 +1,140 @@
+-- Bulk Inserting Data from csv files into the database and using a stored procedure to slightly automate the process --
+-- It accepts no parameters as inputs or returns any value --
+-- Can be used by uncommenting the following code, --
+    -- EXEC bronze.load_bronze
+
+CREATE OR ALTER PROCEDURE bronze.load_bronze AS
+BEGIN
+	DECLARE @start_time DATETIME, @end_time DATETIME, @batch_start_time DATETIME, @batch_end_time DATETIME;
+	BEGIN TRY
+		SET @batch_start_time = GETDATE();
+		-- To avoid repition and duplicates, TRUNCATE is used --
+		PRINT 'Loading Table: bronze.crmCustInfo'; 
+		SET @start_time = GETDATE()
+		TRUNCATE TABLE bronze.crmCustInfo;
+
+		BULK INSERT bronze.crmCustInfo
+		FROM 'D:\Data Analysis\sql-data-warehouse-project\datasets\source_crm\cust_info.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		PRINT 'Loading Duration ' + CAST (DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+		/* Checking if the query has worked --
+
+		-- SELECT * FROM bronze.crmCustInfo;
+
+		-- Verifying for duplicates (by comparing to the csv file's rows --
+
+		SELECT COUNT(*) FROM bronze.crmCustInfo; */
+
+
+		-- Table 2 -- 
+		PRINT '----';
+		PRINT 'Loading Table: bronze.crmPrdInfo';
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.crmPrdInfo;
+
+		BULK INSERT bronze.crmPrdInfo
+		FROM 'D:\Data Analysis\sql-data-warehouse-project\datasets\source_crm\prd_info.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		PRINT 'Loading Duration ' + CAST (DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+
+		-- Table 3 -- 
+
+		PRINT 'Loading Table: bronze.crmSalesDetails'; 
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.crmSalesDetails;
+
+		BULK INSERT bronze.crmSalesDetails
+		FROM 'D:\Data Analysis\sql-data-warehouse-project\datasets\source_crm\sales_details.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		PRINT 'Loading Duration ' + CAST (DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+
+		-- Had to change 'dt' columnns' datatype from DATE to INT --
+
+		 /* IF OBJECT_ID ('bronze.crmSalesDetails', 'U') IS NOT NULL
+			DROP TABLE bronze.crmSalesDetails;
+		CREATE TABLE bronze.crmSalesDetails(
+			sls_ord_num NVARCHAR(50),
+			sls_prd_key NVARCHAR(50),
+			sls_cust_id INT,
+			sls_order_dt INT,
+			sls_ship_dt INT,
+			sls_due_dt INT,
+			sls_sales INT,
+			sls_quantity INT,
+			sls_price INT
+		);
+		*/
+		-- Table 4 --
+		PRINT '----';
+		PRINT 'Loading Table: bronze.erpCust_AZ12'; 
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.erpCust_AZ12;
+
+		BULK INSERT bronze.erpCust_AZ12
+		FROM 'D:\Data Analysis\sql-data-warehouse-project\datasets\source_erp\CUST_AZ12.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		PRINT 'Loading Duration ' + CAST (DATEDIFF(second, @start_time, @end_time) AS NVARCHAR)+ ' seconds';
+
+		-- Table 5 --
+
+		PRINT '----';
+		PRINT 'Loading Table: bronze.erpLoc_A101';
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.erpLoc_A101;
+
+		BULK INSERT bronze.erpLoc_A101
+		FROM 'D:\Data Analysis\sql-data-warehouse-project\datasets\source_erp\LOC_A101.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		PRINT 'Loading Duration ' + CAST (DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+
+		-- Table 6 --
+
+		PRINT '----';
+		PRINT 'Loading Table: bronze.erpPx_Cat_G1v2';
+		SET @start_time = GETDATE();
+		TRUNCATE TABLE bronze.erpPx_Cat_G1v2;
+
+		BULK INSERT bronze.erpPx_Cat_G1v2
+		FROM 'D:\Data Analysis\sql-data-warehouse-project\datasets\source_erp\PX_CAT_G1V2.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			TABLOCK
+		);
+		SET @end_time = GETDATE();
+		PRINT 'Loading Duration ' + CAST (DATEDIFF(second, @start_time, @end_time) AS NVARCHAR) + ' seconds';
+		SET @batch_end_time = GETDATE();
+		PRINT '-------';
+		PRINT 'Total Loading Duration: ' + CAST(DATEDIFF(second,@batch_start_time, @batch_end_time) AS NVARCHAR) + ' seconds';
+		END TRY
+		BEGIN CATCH
+			PRINT 'An Error occured during loading the Bronze layer';
+			PRINT 'Error Message' + ERROR_MESSAGE();
+		END CATCH
+END
+
