@@ -11,11 +11,14 @@ CREATE TABLE silver.crmCustInfo(
 	cst_create_date DATE,
 	dwh.create_date DATETIME2 DEFAULT = GETDATE()
 ); 
+-- After data manipulation in the Table, columns have been updated --
 IF OBJECT_ID ('silver.crmPrdInfo', 'U') IS NOT NULL
 	DROP TABLE silver.crmPrdInfo;
 CREATE TABLE silver.crmPrdInfo(
 	prd_id INT,
-	prd_key NVARCHAR(50),prd_nm NVARCHAR(50),
+	cat_id NVARCHAR(50),
+	prd_key NVARCHAR(50),
+	prd_nm NVARCHAR(50),
 	prd_cost INT,
 	prd_line NVARCHAR(5),
 	prd_start_dt DATE,
