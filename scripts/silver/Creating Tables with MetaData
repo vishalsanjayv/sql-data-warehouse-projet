@@ -9,7 +9,7 @@ CREATE TABLE silver.crmCustInfo(
 	cst_marital_status NVARCHAR(50),
 	cst_gndr NVARCHAR(50),
 	cst_create_date DATE,
-	dwh.create_date DATETIME2 DEFAULT = GETDATE()
+	dwh_create_date DATETIME2 DEFAULT = GETDATE()
 ); 
 -- After data manipulation in the Table, columns have been updated --
 IF OBJECT_ID ('silver.crmPrdInfo', 'U') IS NOT NULL
@@ -23,7 +23,7 @@ CREATE TABLE silver.crmPrdInfo(
 	prd_line NVARCHAR(5),
 	prd_start_dt DATE,
 	prd_end_dt DATE,
-	dwh.create_date DATETIME2 DEFAULT = GETDATE()
+	dwh_create_date DATETIME2 DEFAULT = GETDATE()
 );
 IF OBJECT_ID ('silver.crmSalesDetails', 'U') IS NOT NULL
 	DROP TABLE silver.crmSalesDetails;
@@ -37,7 +37,7 @@ CREATE TABLE silver..crmSalesDetails(
 	sls_sales INT,
 	sls_quantity INT,
 	sls_price INT,
-	dwh.create_date DATETIME2 DEFAULT = GETDATE()
+	dwh_create_date DATETIME2 DEFAULT = GETDATE()
 );
 IF OBJECT_ID ('silver.erpCust_AZ12', 'U') IS NOT NULL
 	DROP TABLE silver.erpCust_AZ12;
@@ -45,14 +45,14 @@ CREATE TABLE silver.erpCust_AZ12(
 	cid NVARCHAR(50),
 	bdate DATE,
 	gen NVARCHAR(50), ,
-	dwh.create_date DATETIME2 DEFAULT = GETDATE()
+	dwh_create_date DATETIME2 DEFAULT = GETDATE()
 );
 IF OBJECT_ID ('silver.erpLoc_A101', 'U') IS NOT NULL
 	DROP TABLE silver.erpLoc_A101;
 CREATE TABLE silver.erpLoc_A101(
 	cid NVARCHAR(50),
 	country NVARCHAR(50), ,
-	dwh.create_date DATETIME2 DEFAULT = GETDATE()
+	dwh_create_date DATETIME2 DEFAULT = GETDATE()
 );
 IF OBJECT_ID ('silver.erpPx_Cat_G1v2', 'U') IS NOT NULL
 	DROP TABLE silver.erpPx_Cat_G1v2;
@@ -61,5 +61,5 @@ CREATE TABLE silver.erpPx_Cat_G1v2(
 	cat NVARCHAR(50),
 	subcat NVARCHAR(50),
 	maintenance NVARCHAR(10), ,
-	dwh.create_date DATETIME2 DEFAULT = GETDATE()
+	dwh_create_date DATETIME2 DEFAULT = GETDATE()
 );
