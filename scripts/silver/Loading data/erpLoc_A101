@@ -1,0 +1,22 @@
+-- Introducing a foreign key relationship with other tables where possible --
+
+SELECT * FROM bronze.erpLoc_A101
+WHERE cid = 'AW-00011035';
+SELECT * FROM silver.crmCustInfo;
+
+-- Normalizing the cid values to match cst_id from CustInfo Table --
+
+INSERT INTO silver.erpLoc_A101(cid,country)
+SELECT
+TRIM(REPLACE(cid,'-','')) AS cid,
+CASE WHEN TRIM(country) IN ('US','USA') THEN 'United States'
+	WHEN TRIM(country) = 'DE' THEN 'Denmark'
+	WHEN TRIM(country) IS NULL OR TRIM(COUNTRY) = '' THEN 'n/a'
+	ELSE TRIM(country)
+END AS country
+FROM bronze.erpLoc_A101
+
+/* Checking for Data Consistency in country columns */
+
+SELECT * 
+FROM silver.erpLoc_A101;
