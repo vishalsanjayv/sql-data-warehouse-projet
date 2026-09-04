@@ -1,0 +1,27 @@
+-- As this is a supplementary info table, finding a way to connect it to the main table through a common key value --
+
+INSERT INTO silver.erpCust_AZ12(
+cid,
+bdate,
+gen)
+SELECT 
+CASE WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid, 4,LEN(cid))
+	ELSE cid
+END as cid, -- The 'cid' column is the same as cust_id from crmCustInfo with extra characters --
+CASE WHEN bdate > GETDATE() THEN NULL
+	WHEN bdate < '1920-01-01' THEN NULL
+	ELSE bdate
+END AS bdate, -- Handling invalid date values --
+CASE WHEN UPPER(TRIM(gen)) IN ('M','MALE') THEN 'Male'
+	WHEN UPPER(TRIM(gen)) IN ('F','FEMALE') THEN 'Female'
+	ELSE 'n/a'
+END AS gen -- Normalizing gender values --
+FROM bronze.erpCust_AZ12
+
+--Verification --
+
+SELECT bdate FROM silver.erpCust_AZ12
+WHERE bdate > GETDATE() OR bdate < '1920-01-01';
+
+SELECT DISTINCT gen
+FROM silver.erpCust_AZ12
