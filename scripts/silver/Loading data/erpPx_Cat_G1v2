@@ -1,0 +1,24 @@
+-- Looking for unmatching values for normalization --
+
+SELECT cat_id FROM silver.crmPrdInfo
+WHERE cat_id NOT IN (SELECT cat_id FROM bronze.erpPx_Cat_G1v2);
+
+-- Checking for leading or trailing spaces --
+
+SELECT *
+FROM bronze.erpPx_Cat_G1v2
+WHERE TRIM(cat) != cat OR subcat != TRIM(subcat) OR maintenance != TRIM(maintenance)
+
+-- Inserting into Silver Layer --
+
+INSERT INTO silver.erpPx_Cat_G1v2 (
+	id,
+	cat,
+	subcat,
+	maintenance)
+SELECT *
+FROM bronze.erpPx_Cat_G1v2;
+
+-- Check --
+SELECT *
+FROM silver.erpPx_Cat_G1v2;
