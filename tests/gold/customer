@@ -1,0 +1,10 @@
+-- Comparing both the gender columns for inconsistencies --
+SELECT DISTINCT
+ci.cst_gndr,
+ca.gen,
+CASE WHEN ci.cst_gndr != 'n/a' THEN ci.cst_gndr
+ELSE COALESCE(ca.gen,'n/a')
+END as new_gen
+FROM silver.crmCustInfo as ci
+LEFT JOIN silver.erpCust_AZ12 as ca
+ON ci.cst_key = ca.cid;
