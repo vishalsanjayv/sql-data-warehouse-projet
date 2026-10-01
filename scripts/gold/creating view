@@ -1,0 +1,19 @@
+CREATE VIEW gold.dim_Customers AS
+SELECT 
+ROW_NUMBER() OVER(ORDER BY ci.cst_id) as Customer_key, -- Creating a surrogate key for the dim table --
+ci.cst_id as Customer_id,
+ci.cst_key as Customer_number,
+ci.cst_firstname as First_name,
+ci.cst_lastname as Second_name,
+CASE WHEN ci.cst_gndr != 'n/a' THEN ci.cst_gndr
+ELSE COALESCE(ca.gen,'n/a')
+END as Gender,
+ci.cst_marital_status as Marital_status,
+ci.cst_create_date as Create_date,
+ca.bdate as Birthdate,
+la.country as Country
+FROM silver.crmCustInfo as ci
+LEFT JOIN silver.erpCust_AZ12 as ca
+ON ci.cst_key = ca.cid
+LEFT JOIN silver.erpLoc_A101 as la
+ON ci.cst_key = la.cid
